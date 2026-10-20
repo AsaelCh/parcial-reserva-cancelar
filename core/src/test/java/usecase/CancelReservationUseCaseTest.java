@@ -1,8 +1,12 @@
 package usecase;
 
 import org.junit.jupiter.api.Test;
+import reserva.exception.PersistenceException;
+import reserva.exception.ReservaYaCanceladaException;
+import reserva.exception.ReservationNotFoundException;
 import reserva.modelo.Reserva;
 import reserva.output.ReservationRepository;
+import reserva.usecase.CancelReservationUseCase;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -76,13 +80,59 @@ class CancelReservationUseCaseTest {
                 2
         );
 
+        // Primero cancelamos la reserva para preparar el escenario.
+        reserva.cancelar();
+
         ReservationRepository repository =
                 mock(ReservationRepository.class);
 
         when(repository.buscarPorId(id))
                 .thenReturn(Optional.of(reserva));
 
-        // TODO: preparar una reserva que ya esté cancelada
+        CancelReservationUseCase useCase =
+                new CancelReservationUseCase(repository);
+
+        assertThrows(
+                ReservaYaCanceladaException.class,
+                () -> useCase.execute(id)
+        );
+
+        verify(repository).buscarPorId(id);
+        verify(repository, never()).guardar(any());
     }
+
+
+    @Test
+    void cancelarReservaConErrorAlGuardarLanzaExcepcion() {
+        UUID id = UUID.randomUUID();
+
+        Reserva reserva = Reserva.instance(
+                id,
+                "cliente@gmail.com",
+                LocalDate.of(2026, 11, 10),
+                2
+        );
+
+        ReservationRepository repository =
+                mock(ReservationRepository.class);
+
+        when(repository.buscarPorId(id))
+                .thenReturn(Optional.of(reserva));
+
+        when(repository.guardar(reserva))
+                .thenReturn(false);
+
+        CancelReservationUseCase useCase =
+                new CancelReservationUseCase(repository);
+
+        assertThrows(
+                PersistenceException.class,
+                () -> useCase.execute(id)
+        );
+
+        verify(repository).buscarPorId(id);
+        verify(repository).guardar(reserva);
+    }
+
 
 }

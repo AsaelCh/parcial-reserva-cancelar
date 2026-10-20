@@ -1,6 +1,8 @@
 package model;
 
 import org.junit.jupiter.api.Test;
+import reserva.exception.ReservaInvalidaException;
+import reserva.modelo.Reserva;
 
 import java.time.LocalDate;
 import java.util.UUID;
