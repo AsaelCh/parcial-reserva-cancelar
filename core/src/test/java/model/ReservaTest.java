@@ -82,6 +82,18 @@ class ReservaTest {
                 )
         );
     }
+    @Test
+    void crearReservaConCantidadPersonasCeroLanzaExcepcion() {
+        assertThrows(
+                ReservaInvalidaException.class,
+                () -> Reserva.instance(
+                        UUID.randomUUID(),
+                        "cliente@gmail.com",
+                        LocalDate.of(2026, 11, 10),
+                        0
+                )
+        );
+    }
 
 
 
