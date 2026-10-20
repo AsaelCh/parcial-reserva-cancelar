@@ -70,4 +70,13 @@ public class Reserva {
     public Estado getEstado() {
         return estado;
     }
+    public void cancelar() {
+        if (this.estado == Estado.CANCELADA) {
+            throw new reserva.exception.ReservaYaCanceladaException(
+                    "La reserva ya esta cancelada"
+            );
+        }
+
+        this.estado = Estado.CANCELADA;
+    }
 }
