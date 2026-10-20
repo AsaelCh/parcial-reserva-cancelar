@@ -42,4 +42,27 @@ class CancelReservationUseCaseTest {
         verify(repository).buscarPorId(id);
         verify(repository).guardar(reserva);
     }
+
+    @Test
+    void cancelarReservaInexistenteLanzaExcepcion() {
+        UUID id = UUID.randomUUID();
+
+        ReservationRepository repository =
+                mock(ReservationRepository.class);
+
+        when(repository.buscarPorId(id))
+                .thenReturn(Optional.empty());
+
+        CancelReservationUseCase useCase =
+                new CancelReservationUseCase(repository);
+
+        assertThrows(
+                ReservationNotFoundException.class,
+                () -> useCase.execute(id)
+        );
+
+        verify(repository).buscarPorId(id);
+        verify(repository, never()).guardar(any());
+    }
+
 }
