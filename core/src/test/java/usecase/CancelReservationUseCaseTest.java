@@ -65,4 +65,24 @@ class CancelReservationUseCaseTest {
         verify(repository, never()).guardar(any());
     }
 
+    @Test
+    void cancelarReservaYaCanceladaLanzaExcepcion() {
+        UUID id = UUID.randomUUID();
+
+        Reserva reserva = Reserva.instance(
+                id,
+                "cliente@gmail.com",
+                LocalDate.of(2026, 11, 10),
+                2
+        );
+
+        ReservationRepository repository =
+                mock(ReservationRepository.class);
+
+        when(repository.buscarPorId(id))
+                .thenReturn(Optional.of(reserva));
+
+        // TODO: preparar una reserva que ya esté cancelada
+    }
+
 }
