@@ -31,5 +31,19 @@ class ReservaTest {
         assertEquals(Reserva.Estado.ACTIVA, reserva.getEstado());
     }
 
+    @Test
+    void crearReservaConIdNuloLanzaExcepcion() {
+        assertThrows(
+                ReservaInvalidaException.class,
+                () -> Reserva.instance(
+                        null,
+                        "cliente@gmail.com",
+                        LocalDate.of(2026, 11, 10),
+                        2
+                )
+        );
+    }
+
+
 
 }
